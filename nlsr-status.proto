@@ -1,0 +1,39 @@
+package nlsr_message;
+
+message NlsrStatusMessage {
+  message Name {
+    repeated bytes component = 8;
+  }
+
+  message LsaInfo {
+    required Name OriginRouter = 129;
+    required uint64 SequenceNumber = 130;
+    required uint64 ExpirationPeriod = 139;
+  }
+
+  message NlsrStatus {
+    required Name OriginRouter      = 129;
+    repeated AdjacencyLsa alsa      = 131;
+    repeated CoordinateLsa clsa     = 133;
+    repeated NameLsa nlsa           = 137
+  }
+
+  message AdjacencyLsa {
+    LsaInfo lsaInfo  = 128;
+    Adjacency        = 132;
+  }
+
+  message CoordinateLsa {
+    required LsaInfo lsaInfo         = 128;
+    required double HyperbolicRadius = 135;
+    required double HyperbolicAngle  = 136;
+  }
+
+  message NameLsa {
+    required LsaInfo lsaInfo         = 128;
+    required uint32 cost             = 140;
+    required string uri              = 141;
+  }
+
+  required NlsrStatus nlsr_status  = 138;
+}
