@@ -75,23 +75,24 @@
 
         var nlsrStatusNameMessage = new NlsrStatusNamesMessage();
         ProtobufTlv.decode(nlsrStatusNameMessage, descriptor, encodedMessage);
-        console.log(encodedMessage.toHex());
-        result.innerHTML += "Name LSA:" + "</br>";
 
         var nlsrStatusName = nlsrStatusNameMessage.name_lsa;
-        console.log(nlsrStatusName.lsa_info.origin_router.component.length);
-        var line = "  info = LsaInfo (Origin Router: ";
-        for (var i = 0; i < nlsrStatusName.lsa_info.origin_router.component.length; ++i) {
-          line += "/" + nlsrStatusName.lsa_info.origin_router.component[i].toString("utf8");
-        }
+        var line = "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri();;
+        // Need to look at origin_router_name inside the OriginRouter sub type. -- jefft0
+        /*for (var i = 0; i < nlsrStatusName.lsa_info.origin_router.origin_router_name.component.length; ++i) {
+          line += "/" + nlsrStatusName.lsa_info.origin_router.origin_router_name.component[i].toString("utf8");
+        }*/
 
         line += ", Sequence Number: " + nlsrStatusName.lsa_info.sequence_number +
                 ", Expiration Period: " + nlsrStatusName.lsa_info.expiration_period + ")" + "</br>";
 
         for (var inames = 0; inames < nlsrStatusName.name_prefix.length; ++inames) {
-          line += "  name = " + nlsrStatusName.name_prefix[inames] + "</br>";
+          line += "  name = ";
+          // Need to interate through the name components. -- jefft0
+          for (var i = 0; i < nlsrStatusName.name_prefix[inames].component.length; ++i)
+            line += "/" + nlsrStatusName.name_prefix[inames].component[i].toString("utf8");
+          line += "</br>";
         }
-        //console.log("Names size: " +  nlsrStatusName.name_prefix.length);
         result.innerHTML += line + "</br>";
       }
 

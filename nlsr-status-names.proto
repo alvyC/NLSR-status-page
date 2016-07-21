@@ -5,15 +5,19 @@ message NlsrStatusNamesMessage {
     repeated bytes component = 8;
   }
 
+  message OriginRouter {
+    required Name origin_router_name = 7;
+  }
+
   message LsaInfo {
-    required Name origin_router = 129;
+    required OriginRouter origin_router = 129;
     required uint64 sequence_number = 130;
     required uint64 expiration_period = 139;
   }
 
   message NameLsa {
     required LsaInfo lsa_info = 128;
-    repeated Name name_prefix = 141;
+    repeated Name name_prefix = 7;
   }
 
   required NameLsa name_lsa = 137;
