@@ -34,5 +34,5 @@ function requestNlsrStatus(name) {
 
 window.onload = function() {
     document.getElementById("host").innerHTML=hostip;
-    requestNlsrStatus("/ndn/edu/memphis/%C1.Router/cs/pollux/lsdb/list");
+    requestNlsrStatus("/ndn/edu/memphis/%C1.Router/titan/lsdb/list");
 }

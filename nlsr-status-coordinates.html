@@ -1,0 +1,105 @@
+<?xml version = "1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"DTD/xhtml1-strict.dtd">
+<!--
+ * Copyright (C) 2016 Regents of the University of California.
+ * @author: Jeff Thompson <jefft0@remap.ucla.edu>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GNU Lesser General Public License is in the file COPYING.
+-->
+<html xmlns = "http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>NLSR status page</title>
+
+    <script type="text/javascript" src="/home/alvy/ndn-js/contrib/dcodeio/long.min.js"></script>
+    <script type="text/javascript" src="/home/alvy/ndn-js/contrib/dcodeio/bytebuffer-ab.min.js"></script>
+    <script type="text/javascript" src="/home/alvy/ndn-js/contrib/dcodeio/protobuf.min.js"></script>
+
+    <script type="text/javascript" src="/home/alvy/ndn-js/build/ndn.js"></script>
+
+    <script type="text/javascript">
+
+      function testListCoordinateLsas()
+      {
+        var result = document.getElementById('result');
+        result.innerHTML = "";
+
+        // Connect to the local forwarder with a Unix socket.
+        var face = new Face({host: "localhost"});
+        //var face = new Face(new UnixTransport(), {host: "localhost"});
+
+        var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/coordinates"));
+        console.log("Express Interest: " + interest.getName().toUri());
+        interest.setInterestLifetimeMilliseconds(4000);
+        result.innerHTML += "Express interest " + interest.getName().toUri() + "</br>";
+        SegmentFetcher.fetch
+          (face, interest, SegmentFetcher.DontVerifySegment,
+           function(content) {
+             console.log("Got data.");
+             printCoordinateLsas(content);
+           },
+           function(errorCode, message) {
+             console.log("Error.");
+             result.innerHTML += message + "</br>";
+           });
+      }
+
+      function printCoordinateLsas(encodedMessage) {
+        var ProtoBuf = dcodeIO.ProtoBuf;
+        var builder = ProtoBuf.loadProtoFile("nlsr-status-coordinates.proto");
+
+        var descriptor = builder.lookup("nlsr_message.NlsrStatusCoordinateMessage");
+        var NlsrStatusCoordinateMessage = descriptor.build();
+
+        var nlsrStatusCoordinateMessage = new NlsrStatusCoordinateMessage();
+        //console.log("In printAdjacentLsas");
+
+        ProtobufTlv.decode(nlsrStatusCoordinateMessage, descriptor, encodedMessage);
+
+        var line = "";
+        console.log("In printAdjacentLsas");
+        console.log(nlsrStatusCoordinateMessage.coor_lsa.length);
+        /* for (var iAdjLsa = 0; iAdjLsa < nlsrStatusAdjMessage.adj_lsa.length;
+              ++iAdjLsa) {
+          var nlsrStatusAdj = nlsrStatusAdjMessage.adj_lsa[iAdjLsa];
+
+          line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusAdj.lsa_info.origin_router.origin_router_name.component).toUri();
+
+          line += ", Sequence Number: " + nlsrStatusAdj.lsa_info.sequence_number +
+                ", Expiration Period: " + nlsrStatusAdj.lsa_info.expiration_period + ")" + "</br>";
+
+          for (var iAdj = 0; iAdj < nlsrStatusAdj.adj.length;
+               ++iAdj) {
+            line += " adjacency = Adjacency(Name: " + ProtobufTlv.toName(nlsrStatusAdj.adj[iAdj].name.component).toUri() +
+                    ", Uri: " + nlsrStatusAdj.adj[iAdj].uri + ", Cost: " + nlsrStatusAdj.adj[iAdj].cost + ")" + "</br>";
+
+
+          }
+          line += "</br>";
+         }
+         result.innerHTML += line + "</br>";*/
+      }
+
+    </script>
+
+</head>
+<body >
+    <button onclick="testListCoordinateLsas()">TestCoordinateLsa</button>
+
+    <p id="result"></p>
+
+</body>
+</html>

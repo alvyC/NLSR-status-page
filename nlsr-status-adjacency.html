@@ -54,6 +54,7 @@
         SegmentFetcher.fetch
           (face, interest, SegmentFetcher.DontVerifySegment,
            function(content) {
+             console.log("Got data.");
              printNameLsas(content);
            },
            function(errorCode, message) {
@@ -68,19 +69,39 @@
        */
       function printNameLsas(encodedMessage)
       {
-        var Protobuf = dcodeIO.Protobuf;
-        var builder = Protobuf.loadProtoFile("nlsr-status-names.proto");
+        var ProtoBuf = dcodeIO.ProtoBuf;
+        var builder = ProtoBuf.loadProtoFile("nlsr-status-names-working.proto");
         var descriptor = builder.lookup("nlsr_message.NlsrStatusNamesMessage");
         var NlsrStatusNamesMessage = descriptor.build();
+
         var nlsrStatusNameMessage = new NlsrStatusNamesMessage();
         ProtobufTlv.decode(nlsrStatusNameMessage, descriptor, encodedMessage);
 
+        /*var nlsrStatusName = nlsrStatusNameMessage.name_lsa[1];
+        var line = "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri();
+        //console.log(nlsrStatusNameMessage.name_lsa.length);
+        console.log(ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri());
+        // Need to look at origin_router_name inside the OriginRouter sub type. -- jefft0
+        /*for (var i = 0; i < nlsrStatusName.lsa_info.origin_router.origin_router_name.component.length; ++i) {
+          line += "/" + nlsrStatusName.lsa_info.origin_router.origin_router_name.component[i].toString("utf8");
+        }*/
+
+        /*line += ", Sequence Number: " + nlsrStatusName.lsa_info.sequence_number +
+                ", Expiration Period: " + nlsrStatusName.lsa_info.expiration_period + ")" + "</br>";
+
+        for (var inames = 0; inames < nlsrStatusName.name_prefix.length; ++inames) {
+          line += "  name = ";
+          // Need to iterate through the name components. -- jefft0
+          for (var i = 0; i < nlsrStatusName.name_prefix[inames].component.length; ++i)
+            line += "/" + nlsrStatusName.name_prefix[inames].component[i].toString("utf8");
+          line += "</br>";
+        }*/
         var line = "";
         for (var iNameLsa = 0; iNameLsa < nlsrStatusNameMessage.name_lsa.length;
              ++iNameLsa) {
           var nlsrStatusName = nlsrStatusNameMessage.name_lsa[iNameLsa];
-          /*console.log(ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri());*/
-          line = "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri();
+          console.log(ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri());
+          line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri();
 
           line += ", Sequence Number: " + nlsrStatusName.lsa_info.sequence_number +
                 ", Expiration Period: " + nlsrStatusName.lsa_info.expiration_period + ")" + "</br>";

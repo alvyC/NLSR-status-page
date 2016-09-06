@@ -1,6 +1,6 @@
 package nlsr_message;
 
-message NlsrStatusNamesMessage {
+message NlsrStatusAdjMessage {
   message Name {
     repeated bytes component = 8;
   }
@@ -10,15 +10,21 @@ message NlsrStatusNamesMessage {
   }
 
   message LsaInfo {
-    required OriginRouter origin_router = 129;
+    required OriginRouter origin_router = 7;
     required uint64 sequence_number = 130;
     required uint64 expiration_period = 139;
   }
 
-  message NameLsa {
-    required LsaInfo lsa_info = 128;
-    repeated Name name_prefix = 7;
+  message Adjacency {
+    required Name name = 7;
+    required string uri = 141;
+    required uint64 cost = 140;
   }
 
-  repeated NameLsa name_lsa = 137;
+  message AdjacencyLsa {
+    required LsaInfo lsa_info = 128;
+    repeated Adjacency adj = 132;
+  }
+
+  repeated AdjacencyLsa adj_lsa = 131;
 }
