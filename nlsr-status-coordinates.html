@@ -38,10 +38,12 @@
         result.innerHTML = "";
 
         // Connect to the local forwarder with a Unix socket.
-        var face = new Face({host: "localhost"});
+        // var face = new Face({host: "localhost"});
+        var face = new Face({host: "titan.cs.memphis.edu"});
         //var face = new Face(new UnixTransport(), {host: "localhost"});
 
-        var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/coordinates"));
+        //var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/coordinates"));
+        var interest = new Interest(new Name("/ndn/edu/memphis/%C1.Router/titan/lsdb/names"));
         console.log("Express Interest: " + interest.getName().toUri());
         interest.setInterestLifetimeMilliseconds(4000);
         result.innerHTML += "Express interest " + interest.getName().toUri() + "</br>";
@@ -65,32 +67,28 @@
         var NlsrStatusCoordinateMessage = descriptor.build();
 
         var nlsrStatusCoordinateMessage = new NlsrStatusCoordinateMessage();
-        //console.log("In printAdjacentLsas");
+        console.log("In printCoordinateLsas");
+        //console.log(encodedMessage.toHex());
 
         ProtobufTlv.decode(nlsrStatusCoordinateMessage, descriptor, encodedMessage);
 
         var line = "";
-        console.log("In printAdjacentLsas");
+
         console.log(nlsrStatusCoordinateMessage.coor_lsa.length);
-        /* for (var iAdjLsa = 0; iAdjLsa < nlsrStatusAdjMessage.adj_lsa.length;
-              ++iAdjLsa) {
-          var nlsrStatusAdj = nlsrStatusAdjMessage.adj_lsa[iAdjLsa];
+        for (var iCoorLsa = 0; iCoorLsa < nlsrStatusCoordinateMessage.coor_lsa.length;
+              ++iCoorLsa) {
+          var nlsrStatusCoor = nlsrStatusCoordinateMessage.coor_lsa[iCoorLsa];
 
-          line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusAdj.lsa_info.origin_router.origin_router_name.component).toUri();
+          line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusCoor.lsa_info.origin_router.origin_router_name.component).toUri();
 
-          line += ", Sequence Number: " + nlsrStatusAdj.lsa_info.sequence_number +
-                ", Expiration Period: " + nlsrStatusAdj.lsa_info.expiration_period + ")" + "</br>";
+          line += ", Sequence Number: " + nlsrStatusCoor.lsa_info.sequence_number +
+                ", Expiration Period: " + nlsrStatusCoor.lsa_info.expiration_period + ")" + "</br>";
 
-          for (var iAdj = 0; iAdj < nlsrStatusAdj.adj.length;
-               ++iAdj) {
-            line += " adjacency = Adjacency(Name: " + ProtobufTlv.toName(nlsrStatusAdj.adj[iAdj].name.component).toUri() +
-                    ", Uri: " + nlsrStatusAdj.adj[iAdj].uri + ", Cost: " + nlsrStatusAdj.adj[iAdj].cost + ")" + "</br>";
-
-
-          }
+          line += "angle: " + nlsrStatusCoor.angle.value + "</br>";
+          line += "radius: " + nlsrStatusCoor.radius.value + "</br>";
           line += "</br>";
          }
-         result.innerHTML += line + "</br>";*/
+         result.innerHTML += line + "</br>";
       }
 
     </script>

@@ -38,10 +38,11 @@
         result.innerHTML = "";
 
         // Connect to the local forwarder with a Unix socket.
-        var face = new Face({host: "localhost"});
-        //var face = new Face(new UnixTransport(), {host: "localhost"});
+        //var face = new Face({host: "localhost"});
+        var face = new Face({host: "titan.cs.memphis.edu"});
 
-        var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/adjacencies"));
+         var interest = new Interest(new Name("/ndn/edu/memphis/%C1.Router/titan/lsdb/names"));
+        //var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/adjacencies"));
         console.log("Express Interest: " + interest.getName().toUri());
         interest.setInterestLifetimeMilliseconds(4000);
         result.innerHTML += "Express interest " + interest.getName().toUri() + "</br>";
@@ -69,11 +70,34 @@
 
         ProtobufTlv.decode(nlsrStatusAdjMessage, descriptor, encodedMessage);
 
+        var table = $('<table></table>').addClass('table');
+        var thead = $('<thead></thead>');
+        var theadRow = $('<tr></tr>');
+
+        thead.append(theadRow);
+        table.append(thead);
+
+        // Create the table headers
+        var headers = ["Router", "Prefix"];
+        for (var i in headers) {
+          var row = $('<td></td>').text(headers[i]);
+          theadRow.append(row);
+        }
+
+        // Create the body of the table
+        var tbody = $('<tbody></tbody>');
+        table.append(tbody);
+
+        var tmp;
         var line = "";
         console.log("In printAdjacentLsas");
         console.log(nlsrStatusAdjMessage.adj_lsa.length);
-        /* for (var iAdjLsa = 0; iAdjLsa < nlsrStatusAdjMessage.adj_lsa.length;
+        for (var iAdjLsa = 0; iAdjLsa < nlsrStatusAdjMessage.adj_lsa.length;
               ++iAdjLsa) {
+
+          var row = $('<tr></tr>');
+          tmp = $('<td></td>');
+
           var nlsrStatusAdj = nlsrStatusAdjMessage.adj_lsa[iAdjLsa];
 
           line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusAdj.lsa_info.origin_router.origin_router_name.component).toUri();
@@ -90,7 +114,7 @@
           }
           line += "</br>";
          }
-         result.innerHTML += line + "</br>";*/
+         result.innerHTML += line + "</br>";
       }
 
     </script>

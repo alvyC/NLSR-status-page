@@ -10,7 +10,7 @@ message NlsrStatusAdjMessage {
   }
 
   message LsaInfo {
-    required OriginRouter origin_router = 7;
+    required OriginRouter origin_router = 129;
     required uint64 sequence_number = 130;
     required uint64 expiration_period = 139;
   }

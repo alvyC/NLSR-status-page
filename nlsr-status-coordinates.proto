@@ -11,15 +11,20 @@ message NlsrStatusCoordinateMessage {
 
 
   message LsaInfo {
-    required OriginRouter origin_router = 7;
+    required OriginRouter origin_router = 129; // jefft0: was 7
     required uint64 sequence_number = 130;
-    required uint64 expiration_period = 139;
+    optional uint64 expiration_period = 139;   // jefft0: was required. Should be optional.
+  }
+
+  // jeff0: Need to add this message type.
+  message Double {
+    required double value = 134;
   }
 
   message CoordinateLsa {
     required LsaInfo lsa_info = 128;
-    required double radius = 135;
-    required double angle = 136;
+    required Double radius = 135; // jefft0: Need to use the Double message type.
+    required Double angle = 136;  // jefft0: Need to use the Double message type.
   }
 
   repeated CoordinateLsa coor_lsa = 133;
