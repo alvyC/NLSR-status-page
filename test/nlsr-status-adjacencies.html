@@ -32,17 +32,17 @@
 
     <script type="text/javascript">
 
-      function testListNameLsas()
+      function getAdjacentLsa()
       {
         var result = document.getElementById('result');
         result.innerHTML = "";
 
         // Connect to the local forwarder with a Unix socket.
-        // var face = new Face({host: "localhost"});
+        //var face = new Face({host: "localhost"});
         var face = new Face({host: "titan.cs.memphis.edu"});
 
-        // var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/names"));
-        var interest = new Interest(new Name("/ndn/edu/memphis/%C1.Router/titan/lsdb/names"));
+        var interest = new Interest(new Name("/ndn/edu/memphis/%C1.Router/titan/lsdb/adjacencies"));
+        //var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/adjacencies"));
         console.log("Express Interest: " + interest.getName().toUri());
         interest.setInterestLifetimeMilliseconds(4000);
         result.innerHTML += "Express interest " + interest.getName().toUri() + "</br>";
@@ -50,60 +50,56 @@
           (face, interest, SegmentFetcher.DontVerifySegment,
            function(content) {
              console.log("Got data.");
-             printNameLsas(content);
+             parseAdjacentLsa(content);
            },
            function(errorCode, message) {
+             console.log("Error.");
              result.innerHTML += message + "</br>";
            });
       }
 
-      /**
-       * This is called when all the segments are received to decode the
-       * encodedMessage repeated TLV FaceStatus messages and display the values.
-       * @param {Blob} encodedMessage The repeated TLV-encoded FaceStatus.
-       */
-      function printNameLsas(encodedMessage)
-      {
+      function parseAdjacentLsa(encodedMessage) {
         var ProtoBuf = dcodeIO.ProtoBuf;
-        var builder = ProtoBuf.loadProtoFile("nlsr-status-names.proto");
-        var descriptor = builder.lookup("nlsr_message.NlsrStatusNamesMessage");
-        var NlsrStatusNamesMessage = descriptor.build();
+        var builder = ProtoBuf.loadProtoFile("nlsr-status-adjacencies.proto");
 
-        var nlsrStatusNameMessage = new NlsrStatusNamesMessage();
-        ProtobufTlv.decode(nlsrStatusNameMessage, descriptor, encodedMessage);
+        var descriptor = builder.lookup("nlsr_message.NlsrStatusAdjMessage");
+        var NlsrStatusAdjMessage = descriptor.build();
+
+        var nlsrStatusAdjMessage = new NlsrStatusAdjMessage();
+
+        ProtobufTlv.decode(nlsrStatusAdjMessage, descriptor, encodedMessage);
 
 
         var line = "";
-        for (var iNameLsa = 0; iNameLsa < nlsrStatusNameMessage.name_lsa.length;
-             ++iNameLsa) {
+        console.log("In printAdjacentLsas");
+        console.log(nlsrStatusAdjMessage.adj_lsa.length);
+        for (var iAdjLsa = 0; iAdjLsa < nlsrStatusAdjMessage.adj_lsa.length;
+              ++iAdjLsa) {
 
-          var nlsrStatusName = nlsrStatusNameMessage.name_lsa[iNameLsa];
+          var nlsrStatusAdj = nlsrStatusAdjMessage.adj_lsa[iAdjLsa];
 
-          //console.log(ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri());
-          line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri();
+          line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusAdj.lsa_info.origin_router.origin_router_name.component).toUri();
 
-          line += ", Sequence Number: " + nlsrStatusName.lsa_info.sequence_number +
-                ", Expiration Period: " + nlsrStatusName.lsa_info.expiration_period + ")" + "</br>";
+          line += ", Sequence Number: " + nlsrStatusAdj.lsa_info.sequence_number +
+                ", Expiration Period: " + nlsrStatusAdj.lsa_info.expiration_period + ")" + "</br>";
 
-          for (var inames = 0; inames < nlsrStatusName.name_prefix.length;
-               ++inames) {
-            line += "\t\tname = ";
-            // Need to iterate through the name components. -- jefft0
-            for (var i = 0; i < nlsrStatusName.name_prefix[inames].component.length;
-                 ++i) {
-              line += "/" + nlsrStatusName.name_prefix[inames].component[i].toString("utf8");
-            }
-            line += "</br>";
+          for (var iAdj = 0; iAdj < nlsrStatusAdj.adj.length;
+               ++iAdj) {
+            line += " adjacency = Adjacency(Name: " + ProtobufTlv.toName(nlsrStatusAdj.adj[iAdj].name.component).toUri() +
+                    ", Uri: " + nlsrStatusAdj.adj[iAdj].uri + ", Cost: " + nlsrStatusAdj.adj[iAdj].cost + ")" + "</br>";
+
+
           }
-        }
-        result.innerHTML += line + "</br>";
+          line += "</br>";
+         }
+         result.innerHTML += line + "</br>";
       }
 
     </script>
 
 </head>
 <body >
-    <button onclick="testListNameLsas()">TestNameLsa</button>
+    <button onclick="getAdjacentLsa()">TestAdjacencyLsa</button>
 
     <p id="result"></p>
 
