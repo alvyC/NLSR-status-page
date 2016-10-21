@@ -1,0 +1,31 @@
+package nlsr_message;
+
+message NlsrStatusCoordinateMessage {
+  message Name {
+    repeated bytes component = 8;
+  }
+
+  message OriginRouter {
+    required Name origin_router_name = 7;
+  }
+
+
+  message LsaInfo {
+    required OriginRouter origin_router = 129; // jefft0: was 7
+    required uint64 sequence_number = 130;
+    optional uint64 expiration_period = 139;   // jefft0: was required. Should be optional.
+  }
+
+  // jeff0: Need to add this message type.
+  message Double {
+    required double value = 134;
+  }
+
+  message CoordinateLsa {
+    required LsaInfo lsa_info = 128;
+    required Double radius = 135; // jefft0: Need to use the Double message type.
+    required Double angle = 136;  // jefft0: Need to use the Double message type.
+  }
+
+  repeated CoordinateLsa coor_lsa = 133;
+}

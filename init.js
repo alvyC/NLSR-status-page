@@ -23,15 +23,12 @@ function onData(interest, encodedMessage) {
   console.log(lsType);
 
   if (lsType == "names") {
-    console.log("Got data for Name LSA.");
+    console.log("Got Name LSA Data:");
     parseNameLsa(encodedMessage);
   }
-  else if (nameStr == "adjacencies") {
-    // Grab the JSON content and parse via the link function
-    // var s = DataUtils.toString(data.content);
+  else if (lsType == "adjacencies") {
+    console.log("Got Adjaceny LSA Data: ");
     parseAdjacentLsa(encodedMessage);
-    console.log("Link is: " + s);
-
   }
   else {
     console.log("LSA type: " + lsType + " is unknown");
@@ -59,14 +56,14 @@ function getLsa(lsType) {
   interest.setInterestLifetimeMilliseconds(4000);
   result.innerHTML += "Express interest " + interest.getName().toUri() + "</br>";
   SegmentFetcher.fetch (face, interest, SegmentFetcher.DontVerifySegment,
-                       function(encodedMessage) {
-                         console.log("Got data.");
-                         onData(interest, encodedMessage);
-                       },
-                       function(errorCode, message) {
-                         console.log("Error.");
-                         result.innerHTML += message + "</br>";
-                       });
+                        function(encodedMessage) {
+                          console.log("Got data.");
+                          onData(interest, encodedMessage);
+                        },
+                        function(errorCode, message) {
+                          console.log("Error.");
+                          result.innerHTML += message + "</br>";
+                        });
 }
 
 

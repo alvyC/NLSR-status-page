@@ -32,8 +32,7 @@
 
     <script type="text/javascript">
 
-      function getNameLsa()
-      {
+      function getNameLsa() {
         var result = document.getElementById('result');
         result.innerHTML = "";
 
@@ -62,16 +61,15 @@
        * encodedMessage repeated TLV FaceStatus messages and display the values.
        * @param {Blob} encodedMessage The repeated TLV-encoded FaceStatus.
        */
-      function parseNameLsa(encodedMessage)
-      {
+      function parseNameLsa(encodedMessage) {
+        console.log("parsing name lsa");
         var ProtoBuf = dcodeIO.ProtoBuf;
         var builder = ProtoBuf.loadProtoFile("nlsr-status-names.proto");
-        var descriptor = builder.lookup("nlsr_message.NlsrStatusNamesMessage");
+        var descriptorlo = builder.lookup("nlsr_message.NlsrStatusNamesMessage");
         var NlsrStatusNamesMessage = descriptor.build();
 
         var nlsrStatusNameMessage = new NlsrStatusNamesMessage();
         ProtobufTlv.decode(nlsrStatusNameMessage, descriptor, encodedMessage);
-
 
         var line = "";
         for (var iNameLsa = 0; iNameLsa < nlsrStatusNameMessage.name_lsa.length;
@@ -79,7 +77,7 @@
 
           var nlsrStatusName = nlsrStatusNameMessage.name_lsa[iNameLsa];
 
-          //console.log(ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri());
+          console.log(ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri());
           line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri();
 
           line += ", Sequence Number: " + nlsrStatusName.lsa_info.sequence_number +
@@ -88,22 +86,18 @@
           for (var inames = 0; inames < nlsrStatusName.name_prefix.length;
                ++inames) {
             line += "\t\tname = ";
-            // Need to iterate through the name components. -- jefft0
-            for (var i = 0; i < nlsrStatusName.name_prefix[inames].component.length;
-                 ++i) {
-              line += "/" + nlsrStatusName.name_prefix[inames].component[i].toString("utf8");
-            }
+            line += ProtobufTlv.toName(nlsrStatusName.name_prefix[inames].component).toUri();
             line += "</br>";
           }
         }
-        result.innerHTML += line + "</br>";
+        result.innerHTML += line + "</br></br>";
       }
 
     </script>
 
 </head>
 <body >
-    <button onclick="testListNameLsas()">TestNameLsa</button>
+    <button onclick="getNameLsa()">GetNameLsa</button>
 
     <p id="result"></p>
 

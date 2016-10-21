@@ -134,7 +134,7 @@ function link(str) {
     }
     row.append(tmp);
 
-                // Cycle through the routers links
+    // Cycle through the routers links
     for (var k in obj.links) {
       // Add the prefix
       tmp = $('<td></td>').text(obj.links[k].link);

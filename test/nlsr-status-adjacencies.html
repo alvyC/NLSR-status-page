@@ -32,8 +32,7 @@
 
     <script type="text/javascript">
 
-      function getAdjacentLsa()
-      {
+      function getAdjacentLsa() {
         var result = document.getElementById('result');
         result.innerHTML = "";
 
@@ -69,7 +68,6 @@
 
         ProtobufTlv.decode(nlsrStatusAdjMessage, descriptor, encodedMessage);
 
-
         var line = "";
         console.log("In printAdjacentLsas");
         console.log(nlsrStatusAdjMessage.adj_lsa.length);
@@ -91,8 +89,8 @@
 
           }
           line += "</br>";
-         }
-         result.innerHTML += line + "</br>";
+        }
+        result.innerHTML += line + "</br>";
       }
 
     </script>
