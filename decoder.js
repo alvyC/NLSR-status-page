@@ -40,6 +40,8 @@ function parseNameLsa(encodedMessage) {
     for (var inames = 0; inames < nlsrStatusName.name_prefix.length;
          ++inames) {
       var namePrefix = ProtobufTlv.toName(nlsrStatusName.name_prefix[inames].component).toUri();
+
+      // Make a row, and add name prefix to it
       tmp = $('<td><td>');
       tmp.text(namePrefix);
       row.append(tmp);
@@ -68,7 +70,7 @@ function parseAdjacentLsa(encodedMessage) {
   table.append(thead);
 
   // Create the table headers
-  var headers = ["Router", "Links"];
+  var headers = ["Router", "Adjacents"];
 
   for (var i in headers) {
     var row = $('<td></td>').text(headers[i]);
@@ -79,17 +81,31 @@ function parseAdjacentLsa(encodedMessage) {
   var tbody = $('<tbody></tbody>');
   table.append(tbody);
 
+  var tmp;
   for (var iAdjLsa = 0; iAdjLsa < nlsrStatusAdjMessage.adj_lsa.length;
-      ++iAdjLsa) {
-
+       ++iAdjLsa) {
     var nlsrStatusAdj = nlsrStatusAdjMessage.adj_lsa[iAdjLsa];
-
+    // get the router name
     var originRouter = ProtobufTlv.toName(nlsrStatusAdj.lsa_info.origin_router.origin_router_name.component).toUri();
+
+    // Make a row for the origin router and add orign router to it.
+    var row = $('<tr></tr>');
+    var tmp;
+    tmp = $('<td rowspan="' + nlsrStatusAdj.adj.length + '"></td>');;
+    tmp.text(originRouter);
+    row.append(tmp);
 
     for (var iAdj = 0; iAdj < nlsrStatusAdj.adj.length; ++iAdj) {
       line += " adjacency = Adjacency(Name: " + ProtobufTlv.toName(nlsrStatusAdj.adj[iAdj].name.component).toUri() +
               ", Uri: " + nlsrStatusAdj.adj[iAdj].uri + ", Cost: " + nlsrStatusAdj.adj[iAdj].cost + ")" + "</br>";
-      var adjacency = ProtobufTlv.toName(nlsrStatusAdj.adj[iAdj].name.component).toUri();
+      var adjacent = ProtobufTlv.toName(nlsrStatusAdj.adj[iAdj].name.component).toUri();
+      //var cost = nlsrStatusAdj.adj[iAdj].cost;
+      tmp = $('<td><td>');
+      tmp.text(adjacent);
+      row.append(tmp);
     }
   }
+
+  // Add the table to the page
+  $('#linkStatus').append(table);
 }
