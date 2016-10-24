@@ -15,19 +15,17 @@ $('#myTab a').click(function (e) {
 
 function onData(interest, encodedMessage) {
   console.log("Got data for " + interest.getName().toUri());
-  console.log(data.buf().toString('binary'));
-  var contentS = data.buf().toString('binary');
 
   var nameStr = interest.getName().toUri().split("/");
-  lsType = lsType[lsType.length-1]
+  var lsType = nameStr[nameStr.length-1]
   console.log(lsType);
 
   if (lsType == "names") {
-    console.log("Got Name LSA Data:");
+    console.log("Got Name LSA Data.");
     parseNameLsa(encodedMessage);
   }
   else if (lsType == "adjacencies") {
-    console.log("Got Adjaceny LSA Data: ");
+    console.log("Got Adjaceny LSA Data.");
     parseAdjacentLsa(encodedMessage);
   }
   else {
@@ -54,15 +52,12 @@ function getLsa(lsType) {
   //var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/" + lsType));
   console.log("Express Interest: " + interest.getName().toUri());
   interest.setInterestLifetimeMilliseconds(4000);
-  result.innerHTML += "Express interest " + interest.getName().toUri() + "</br>";
   SegmentFetcher.fetch (face, interest, SegmentFetcher.DontVerifySegment,
                         function(encodedMessage) {
-                          console.log("Got data.");
                           onData(interest, encodedMessage);
                         },
                         function(errorCode, message) {
-                          console.log("Error.");
-                          result.innerHTML += message + "</br>";
+                          console.log("Error retrieving data.");
                         });
 }
 
@@ -71,4 +66,4 @@ $(document).ready(function() {
   face = new Face({host:"titan.cs.memphis.edu"});
   getLsa("names");
   getLsa("adjacencies");
-};
+});

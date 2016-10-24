@@ -1,5 +1,6 @@
 function parseNameLsa(encodedMessage) {
   // decode encoded message
+  console.log("decoder::parseNameLsa");
   var ProtoBuf = dcodeIO.ProtoBuf;
   var builder = ProtoBuf.loadProtoFile("nlsr-status-names.proto");
   var descriptor = builder.lookup("nlsr_message.NlsrStatusNamesMessage");
@@ -25,7 +26,9 @@ function parseNameLsa(encodedMessage) {
   var tbody = $('<tbody></tbody>');
   table.append(tbody);
 
+  //for debugging
   var line = "";
+
   for (var iNameLsa = 0; iNameLsa < nlsrStatusNameMessage.name_lsa.length; ++iNameLsa) {
     var nlsrStatusName = nlsrStatusNameMessage.name_lsa[iNameLsa];
     var originRouter = ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri();
@@ -37,6 +40,10 @@ function parseNameLsa(encodedMessage) {
     tmp.text(originRouter);
     row.append(tmp);
 
+    line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri();
+    line += ", Sequence Number: " + nlsrStatusName.lsa_info.sequence_number +
+                ", Expiration Period: " + nlsrStatusName.lsa_info.expiration_period + ")" + "</br>";
+
     for (var inames = 0; inames < nlsrStatusName.name_prefix.length;
          ++inames) {
       var namePrefix = ProtobufTlv.toName(nlsrStatusName.name_prefix[inames].component).toUri();
@@ -45,7 +52,13 @@ function parseNameLsa(encodedMessage) {
       tmp = $('<td><td>');
       tmp.text(namePrefix);
       row.append(tmp);
+
+      // for debugging
+      line += "\t\tname = ";
+      line += ProtobufTlv.toName(nlsrStatusName.name_prefix[inames].component).toUri();
+      line += "</br>";
     }
+    console.log(line);
   }
 
   // Add the table to the page
@@ -53,6 +66,7 @@ function parseNameLsa(encodedMessage) {
 }
 
 function parseAdjacentLsa(encodedMessage) {
+  console.log("decoder::parseAdjacentLsa");
   // decode encoded message
   var ProtoBuf = dcodeIO.ProtoBuf;
   var builder = ProtoBuf.loadProtoFile("nlsr-status-adjacencies.proto");
