@@ -38,9 +38,9 @@
 
         // Connect to the local forwarder with a Unix socket.
         //var face = new Face({host: "localhost"});
-        var face = new Face({host: "titan.cs.memphis.edu"});
+        var face = new Face({host: "hobo.cs.arizona.edu"});
 
-        var interest = new Interest(new Name("/ndn/edu/memphis/%C1.Router/titan/lsdb/adjacencies"));
+        var interest = new Interest(new Name("/ndn/edu/arizona/%C1.Router/hobo/lsdb/adjacencies"));
         //var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/adjacencies"));
         console.log("Express Interest: " + interest.getName().toUri());
         interest.setInterestLifetimeMilliseconds(4000);
@@ -58,6 +58,7 @@
       }
 
       function parseAdjacentLsa(encodedMessage) {
+        console.log("In parseAdjacentLsa");
         var ProtoBuf = dcodeIO.ProtoBuf;
         var builder = ProtoBuf.loadProtoFile("nlsr-status-adjacencies.proto");
 
@@ -65,12 +66,9 @@
         var NlsrStatusAdjMessage = descriptor.build();
 
         var nlsrStatusAdjMessage = new NlsrStatusAdjMessage();
-
         ProtobufTlv.decode(nlsrStatusAdjMessage, descriptor, encodedMessage);
-
         var line = "";
-        console.log("In printAdjacentLsas");
-        console.log(nlsrStatusAdjMessage.adj_lsa.length);
+
         for (var iAdjLsa = 0; iAdjLsa < nlsrStatusAdjMessage.adj_lsa.length;
               ++iAdjLsa) {
 

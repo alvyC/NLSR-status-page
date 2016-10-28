@@ -65,7 +65,7 @@
         console.log("parsing name lsa");
         var ProtoBuf = dcodeIO.ProtoBuf;
         var builder = ProtoBuf.loadProtoFile("nlsr-status-names.proto");
-        var descriptorlo = builder.lookup("nlsr_message.NlsrStatusNamesMessage");
+        var descriptor = builder.lookup("nlsr_message.NlsrStatusNamesMessage");
         var NlsrStatusNamesMessage = descriptor.build();
 
         var nlsrStatusNameMessage = new NlsrStatusNamesMessage();
