@@ -33,6 +33,14 @@
     <script type="text/javascript">
 
       function getAdjacentLsa() {
+        var hosts = new Array();
+        hosts['hobo.cs.arizona.edu'] = "/ndn/edu/arizona/%C1.Router/hobo";
+        hosts['titan.cs.memphis.edu'] = "/ndn/edu/memphis/%C1.Router/titan";
+
+        for (host in hosts) {
+          console.log(host + "-->" + hosts[host]);
+        }
+
         var result = document.getElementById('result');
         result.innerHTML = "";
 
