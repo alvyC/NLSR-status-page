@@ -36,33 +36,36 @@
         var hosts = new Array();
         hosts['hobo.cs.arizona.edu'] = "/ndn/edu/arizona/%C1.Router/hobo";
         hosts['titan.cs.memphis.edu'] = "/ndn/edu/memphis/%C1.Router/titan";
-
+        var i = 1;
         for (host in hosts) {
-          console.log(host + "-->" + hosts[host]);
+          var result = document.getElementById('result');
+          result.innerHTML = "";
+
+          var face = new Face({host: host});
+
+          var interestName = (new Name(hosts[host])).append(new Name("lsdb/adjacencies"));
+          var interest = new Interest(interestName);
+          interest.setInterestLifetimeMilliseconds(4000);
+
+          console.log(i + ". Expressing interest: " + interest.getName().toUri() + "--->" + host);
+          result.innerHTML += "Express interest " + interest.getName().toUri() + "</br>";
+
+          var flag = false;
+          SegmentFetcher.fetch (face, interest, SegmentFetcher.DontVerifySegment,
+                                function(content) {
+                                  console.log("Got data.");
+                                  parseAdjacentLsa(content);
+                                  flag = true;
+                                },
+                                function(errorCode, message) {
+                                  console.log("Error.");
+                                  result.innerHTML += message + "</br>";
+                                });
+          if (flag == true) {
+            break;
+          }
+          i++;
         }
-
-        var result = document.getElementById('result');
-        result.innerHTML = "";
-
-        // Connect to the local forwarder with a Unix socket.
-        //var face = new Face({host: "localhost"});
-        var face = new Face({host: "hobo.cs.arizona.edu"});
-
-        var interest = new Interest(new Name("/ndn/edu/arizona/%C1.Router/hobo/lsdb/adjacencies"));
-        //var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/adjacencies"));
-        console.log("Express Interest: " + interest.getName().toUri());
-        interest.setInterestLifetimeMilliseconds(4000);
-        result.innerHTML += "Express interest " + interest.getName().toUri() + "</br>";
-        SegmentFetcher.fetch
-          (face, interest, SegmentFetcher.DontVerifySegment,
-           function(content) {
-             console.log("Got data.");
-             parseAdjacentLsa(content);
-           },
-           function(errorCode, message) {
-             console.log("Error.");
-             result.innerHTML += message + "</br>";
-           });
       }
 
       function parseAdjacentLsa(encodedMessage) {
