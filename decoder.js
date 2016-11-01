@@ -35,12 +35,11 @@ function parseNameLsa(encodedMessage) {
 
     // make a row for the origin router
     var row = $('<tr></tr>');
-    var tmp;
-    tmp = $('<td rowspan="' + nlsrStatusName.name_prefix.length + '"></td>');;
+    var tmp = $('<td rowspan="' + nlsrStatusName.name_prefix.length + '"></td>');;
     tmp.text(originRouter);
     row.append(tmp);
 
-    line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusName.lsa_info.origin_router.origin_router_name.component).toUri();
+    line += "  info = LsaInfo (Origin Router: " + originRouter;
     line += ", Sequence Number: " + nlsrStatusName.lsa_info.sequence_number +
                 ", Expiration Period: " + nlsrStatusName.lsa_info.expiration_period + ")\n";
 
@@ -55,7 +54,7 @@ function parseNameLsa(encodedMessage) {
 
       // for debugging
       line += "\t\tname = ";
-      line += ProtobufTlv.toName(nlsrStatusName.name_prefix[inames].component).toUri();
+      line += namePrefix;
       line += "\n";
     }
     console.log(line);
@@ -115,13 +114,15 @@ function parseAdjacentLsa(encodedMessage) {
     row.append(tmp);
 
     for (var iAdj = 0; iAdj < nlsrStatusAdj.adj.length; ++iAdj) {
-      line += "\t\tadjacency = Adjacency(Name: " + ProtobufTlv.toName(nlsrStatusAdj.adj[iAdj].name.component).toUri() +
-              ", Uri: " + nlsrStatusAdj.adj[iAdj].uri + ", Cost: " + nlsrStatusAdj.adj[iAdj].cost + ")" + "\n";
       var adjacent = ProtobufTlv.toName(nlsrStatusAdj.adj[iAdj].name.component).toUri();
       //var cost = nlsrStatusAdj.adj[iAdj].cost;
       tmp = $('<td><td>');
       tmp.text(adjacent);
       row.append(tmp);
+
+      // for debugging
+      line += "\t\tadjacency = Adjacency(Name: " + adjacent +
+              ", Uri: " + nlsrStatusAdj.adj[iAdj].uri + ", Cost: " + nlsrStatusAdj.adj[iAdj].cost + ")" + "\n";
     }
   }
   console.log(line);
