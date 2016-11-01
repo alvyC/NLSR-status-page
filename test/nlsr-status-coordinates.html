@@ -32,7 +32,7 @@
 
     <script type="text/javascript">
 
-      function testListCoordinateLsas()
+      function getCoordinateLsas()
       {
         var result = document.getElementById('result');
         result.innerHTML = "";
@@ -51,7 +51,7 @@
           (face, interest, SegmentFetcher.DontVerifySegment,
            function(content) {
              console.log("Got data.");
-             printCoordinateLsas(content);
+             parseCoordinateLsas(content);
            },
            function(errorCode, message) {
              console.log("Error.");
@@ -59,7 +59,7 @@
            });
       }
 
-      function printCoordinateLsas(encodedMessage) {
+      function parseCoordinateLsas(encodedMessage) {
         var ProtoBuf = dcodeIO.ProtoBuf;
         var builder = ProtoBuf.loadProtoFile("nlsr-status-coordinates.proto");
 
@@ -95,7 +95,7 @@
 
 </head>
 <body >
-    <button onclick="testListCoordinateLsas()">TestCoordinateLsa</button>
+    <button onclick="getCoordinateLsas()">TestCoordinateLsa</button>
 
     <p id="result"></p>
 
