@@ -8,10 +8,11 @@ function parseNameLsa(encodedMessage) {
   var nlsrStatusNameMessage = new NlsrStatusNamesMessage();
   ProtobufTlv.decode(nlsrStatusNameMessage, descriptor, encodedMessage);
 
-  // create table
+  // Add a table to the name prefix section
   var table = $('<table></table>').addClass('table');
   var thead = $('<thead></thead>');
   var theadRow = $('<tr></tr>');
+
   thead.append(theadRow);
   table.append(thead);
 
@@ -47,17 +48,19 @@ function parseNameLsa(encodedMessage) {
          ++inames) {
       var namePrefix = ProtobufTlv.toName(nlsrStatusName.name_prefix[inames].component).toUri();
 
-      // Make a row, and add name prefix to it
-      tmp = $('<td><td>');
+      // Make a row and add name prefix to it
+      var tmp = $('<td></td>');
       tmp.text(namePrefix);
       row.append(tmp);
+      tbody.append(row);
+      row = $('<tr></tr>');
 
       // for debugging
       line += "\t\tname = ";
       line += namePrefix;
       line += "\n";
     }
-    console.log(line);
+    //console.log(line);
   }
 
   // Add the table to the page
@@ -74,7 +77,7 @@ function parseAdjacentLsa(encodedMessage) {
   var nlsrStatusAdjMessage = new NlsrStatusAdjMessage();
   ProtobufTlv.decode(nlsrStatusAdjMessage, descriptor, encodedMessage);
 
-  // Add a new table to the prefix section of the page
+  // Add a new table to the adjacent section
   var table = $('<table></table>').addClass('table');
   var thead = $('<thead></thead>');
   var theadRow = $('<tr></tr>');
@@ -84,7 +87,6 @@ function parseAdjacentLsa(encodedMessage) {
 
   // Create the table headers
   var headers = ["Router", "Adjacents"];
-
   for (var i in headers) {
     var row = $('<td></td>').text(headers[i]);
     theadRow.append(row);
@@ -94,8 +96,8 @@ function parseAdjacentLsa(encodedMessage) {
   var tbody = $('<tbody></tbody>');
   table.append(tbody);
 
-  var tmp;
   var line = ""; // for debugging
+
   for (var iAdjLsa = 0; iAdjLsa < nlsrStatusAdjMessage.adj_lsa.length;
        ++iAdjLsa) {
     var nlsrStatusAdj = nlsrStatusAdjMessage.adj_lsa[iAdjLsa];
@@ -108,24 +110,27 @@ function parseAdjacentLsa(encodedMessage) {
 
     // Make a row for the origin router and add orign router to it.
     var row = $('<tr></tr>');
-    var tmp;
-    tmp = $('<td rowspan="' + nlsrStatusAdj.adj.length + '"></td>');;
+    var tmp = $('<td rowspan="' + nlsrStatusAdj.adj.length + '"></td>');
     tmp.text(originRouter);
     row.append(tmp);
 
     for (var iAdj = 0; iAdj < nlsrStatusAdj.adj.length; ++iAdj) {
       var adjacent = ProtobufTlv.toName(nlsrStatusAdj.adj[iAdj].name.component).toUri();
       //var cost = nlsrStatusAdj.adj[iAdj].cost;
-      tmp = $('<td><td>');
+      var tmp = $('<td></td>');
       tmp.text(adjacent);
       row.append(tmp);
+
+      // Append the data to the table and move to the next row
+      tbody.append(row);
+      row = $('<tr></tr>');
 
       // for debugging
       line += "\t\tadjacency = Adjacency(Name: " + adjacent +
               ", Uri: " + nlsrStatusAdj.adj[iAdj].uri + ", Cost: " + nlsrStatusAdj.adj[iAdj].cost + ")" + "\n";
     }
   }
-  console.log(line);
+  //console.log(line);
 
   // Add the table to the page
   $('#linkStatus').append(table);
