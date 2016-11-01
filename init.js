@@ -37,19 +37,39 @@ function onTimeout(interest) {
   console.log("Interest timed out: " + interest.getName().toUri());
   console.log("Host: " + face.connectionInfo.toString());
 
-  console.log("Reexpressing interest for " + interest.getName().toUri());
+  console.log("Reexpressing interest: " + interest.getName().toUri());
 
   SegmentFetcher.fetch(face, interest, SegmentFetcher.DontVerifySegment,
-                       function(encodedMessage) { console.log("Got data"); onData(interest, encodedMessage);},
-                       function(errorCode, message) { console.log("Error #" + errorCode + ": " + message); /*onTimeout(interest);*/}
+                       function(encodedMessage) {
+                         console.log("Got data");
+                         onData(interest, encodedMessage);
+                       },
+                       function(errorCode, message) {
+                          console.log("Error #" + errorCode + ": " + message);
+                          /*onTimeout(interest);*/
+                        }
                       );
 }
 
 
 function getLsa(lsType) {
   console.log("init:getLsa()");
-  var interest = new Interest(new Name("/ndn/edu/memphis/%C1.Router/titan/lsdb/" + lsType));
-  //var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/" + lsType));
+  switch(lsType) {
+    case "names":
+      // get Name lsa from Titan (Memphis)
+      var interest = new Interest(new Name("/ndn/edu/memphis/%C1.Router/titan/lsdb/" + lsType));
+      break;
+    case "adjacencies":
+      // get Adjacency Lsa from Hobo (Arizona)
+      var interest = new Interest(new Name("/ndn/edu/arizona/%C1.Router/hobo/lsdb/" + lsType));
+      break;
+    case "coordinates":
+      var interest = new Interest(new Name("/ndn/edu/memphis/%C1.Router/titan/lsdb/" + lsType));
+      break;
+    default:
+      console.log("LSA type: " + lsType + " is unknown");
+  }
+
   console.log("Express Interest: " + interest.getName().toUri());
   interest.setInterestLifetimeMilliseconds(4000);
   SegmentFetcher.fetch (face, interest, SegmentFetcher.DontVerifySegment,
