@@ -86,7 +86,7 @@ function parseAdjacentLsa(encodedMessage) {
   table.append(thead);
 
   // Create the table headers
-  var headers = ["Router", "Adjacents"];
+  var headers = ["Router", "Adjacent"];
   for (var i in headers) {
     var row = $('<td></td>').text(headers[i]);
     theadRow.append(row);
