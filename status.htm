@@ -25,7 +25,7 @@
     .hidden { diplay: none;}
     .table-borderless td, .table-borderless th { border: 0 !important; }
     .alert-home { padding-bottom: 20px; }
-    #advertisedPrefixes, #linkStatus { padding-top: 30px; }
+    #namePrefixTable, #adjacentTable, #coordinateTable { padding-top: 30px; }
     thead { font-weight: bold; }
     td.success { color: #347235; font-weight: bold; }
     td.danger { color: #990012; font-weight: bold; }
@@ -72,16 +72,15 @@
 
     <div class="row">
       <ul class="myTab nav nav-tabs nav-justified">
-              <li class="active"><a href="#advertisedPrefixes" data-toggle="tab">Name LSA</a></li>
-              <li class><a href="#linkStatus" data-toggle="tab">Adjacency LSA</a></li>
+              <li class="active"><a href="#namePrefixTable" data-toggle="tab"> Name LSA </a></li>
+              <li class><a href="#coordinateTable" data-toggle="tab"> Coordinate LSA </a></li>
+              <li class><a href="#adjacentTable" data-toggle="tab"> Adjacency LSA </a></li>
             </ul>
 
       <div class="col-md-12 tab-content" id="myTabContent">
-        <div class="tab-pane fade active in" id="advertisedPrefixes">
-        </div>
-
-        <div class="tab-pane fade" id="linkStatus">
-        </div>
+        <div class="tab-pane fade active in" id="namePrefixTable"> </div>
+        <div class="tab-pane fade" id = "coordinateTable"> </div>
+        <div class="tab-pane fade" id="adjacentTable"> </div>
       </div>
     </div>
   </div>

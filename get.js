@@ -84,7 +84,7 @@ function prefix(str) {
   }
 
   // Add the table to the page
-  $('#advertisedPrefixes').append(table);
+  $('#namePrefixTable').append(table);
 }
 
 function link(str) {
@@ -170,7 +170,7 @@ function link(str) {
   }
 
   // Add the table to the page
-  $('#linkStatus').append(table);
+  $('#adjacentTable').append(table);
 }
 
 function validTimestamp(time) {

@@ -64,7 +64,7 @@ function parseNameLsa(encodedMessage) {
   }
 
   // Add the table to the page
-  $('#advertisedPrefixes').append(table);
+  $('#namePrefixTable').append(table);
 }
 
 function parseAdjacentLsa(encodedMessage) {
@@ -133,5 +133,5 @@ function parseAdjacentLsa(encodedMessage) {
   //console.log(line);
 
   // Add the table to the page
-  $('#linkStatus').append(table);
+  $('#adjacentTable').append(table);
 }
