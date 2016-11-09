@@ -130,7 +130,6 @@ function parseAdjacentLsa(encodedMessage) {
               ", Uri: " + nlsrStatusAdj.adj[iAdj].uri + ", Cost: " + nlsrStatusAdj.adj[iAdj].cost + ")" + "\n";
     }
   }
-  //console.log(line);
 
   // Add the table to the page
   $('#adjacentTable').append(table);
