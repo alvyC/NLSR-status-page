@@ -18,15 +18,15 @@ function onData(interest, encodedMessage) {
 
   var nameStr = interest.getName().toUri().split("/");
   var lsType = nameStr[nameStr.length-1]
-  console.log(lsType);
 
   if (lsType == "names") {
-    console.log("Got Name LSA Data.");
     parseNameLsa(encodedMessage);
   }
   else if (lsType == "adjacencies") {
-    console.log("Got Adjaceny LSA Data.");
     parseAdjacentLsa(encodedMessage);
+  }
+  else if (lsType == "coordinates") {
+    parseCoordinateLsa(encodedMessage);
   }
   else {
     console.log("LSA type: " + lsType + " is unknown");
@@ -51,20 +51,26 @@ function onTimeout(interest) {
                       );
 }
 
-
 function getLsa(lsType) {
   console.log("init:getLsa()");
   switch(lsType) {
     case "names":
       // get Name lsa from Titan (Memphis)
+      face = new Face({host:"titan.cs.memphis.edu"});
       var interest = new Interest(new Name("/ndn/edu/memphis/%C1.Router/titan/lsdb/" + lsType));
       break;
     case "adjacencies":
       // get Adjacency Lsa from Hobo (Arizona)
+      //face = new Face({host:"hobo.cs.arizona.edu"});
       var interest = new Interest(new Name("/ndn/edu/arizona/%C1.Router/hobo/lsdb/" + lsType));
       break;
     case "coordinates":
-      var interest = new Interest(new Name("/ndn/edu/memphis/%C1.Router/titan/lsdb/" + lsType));
+      /*face = new Face({host:"titan.cs.memphis.edu"});
+        var interest = new Interest(new Name("/ndn/edu/memphis/%C1.Router/titan/lsdb/" + lsType));*/
+
+      // for testing purpose turned on hyperblic routing on local macnine and get coordinate LSA from "localhost"
+      face = new Face({host:"localhost"});
+      var interest = new Interest(new Name("/ndn/edu/%C1.Router/cs/root/lsdb/" + lsType));
       break;
     default:
       console.log("LSA type: " + lsType + " is unknown");
@@ -77,13 +83,13 @@ function getLsa(lsType) {
                           onData(interest, encodedMessage);
                         },
                         function(errorCode, message) {
-                          console.log("Error retrieving data.");
+                          console.log("Error retrieving data for " + interest.toUri());
                         });
 }
 
 
 $(document).ready(function() {
-  face = new Face({host:"titan.cs.memphis.edu"});
   getLsa("names");
   getLsa("adjacencies");
+  getLsa("coordinates");
 });

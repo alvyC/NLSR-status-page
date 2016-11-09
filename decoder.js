@@ -135,3 +135,29 @@ function parseAdjacentLsa(encodedMessage) {
   // Add the table to the page
   $('#adjacentTable').append(table);
 }
+
+function parseCoordinateLsa(encodedMessage) {
+  console.log("decoder::parseCoordinateLsa");
+  var ProtoBuf = dcodeIO.ProtoBuf;
+  var builder = ProtoBuf.loadProtoFile("nlsr-status-coordinates.proto");
+  var descriptor = builder.lookup("nlsr_message.NlsrStatusCoordinateMessage");
+  var NlsrStatusCoordinateMessage = descriptor.build();
+  var nlsrStatusCoordinateMessage = new NlsrStatusCoordinateMessage();
+  ProtobufTlv.decode(nlsrStatusCoordinateMessage, descriptor, encodedMessage);
+
+  var line = "";
+  for (var iCoorLsa = 0; iCoorLsa < nlsrStatusCoordinateMessage.coor_lsa.length;
+       ++iCoorLsa) {
+    var nlsrStatusCoor = nlsrStatusCoordinateMessage.coor_lsa[iCoorLsa];
+
+    line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusCoor.lsa_info.origin_router.origin_router_name.component).toUri();
+
+    line += ", Sequence Number: " + nlsrStatusCoor.lsa_info.sequence_number +
+          ", Expiration Period: " + nlsrStatusCoor.lsa_info.expiration_period + ")" + "\n";
+
+    line += "angle: " + nlsrStatusCoor.angle.value + "\n";
+    line += "radius: " + nlsrStatusCoor.radius.value + "\n";
+    line += "\n";
+  }
+  console.log(line);
+}
