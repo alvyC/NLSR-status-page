@@ -144,19 +144,53 @@ function parseCoordinateLsa(encodedMessage) {
   var nlsrStatusCoordinateMessage = new NlsrStatusCoordinateMessage();
   ProtobufTlv.decode(nlsrStatusCoordinateMessage, descriptor, encodedMessage);
 
+  // Add a table to the Coordinate LSA section
+  var table = $('<table></table>').addClass('table');
+  var thead = $('<thead></thead>');
+  var theadRow = $('<tr></tr>');
+
+  thead.append(theadRow);
+  table.append(thead);
+
+  var headers = ["Router", "Coordinate"];
+  for (var i in headers) {
+    var theadCol = $('<td></td>').text(headers[i]);
+    theadRow.append(theadCol);
+  }
+
+  // create the body of the table
+  var tbody = $('<tbody></tbody>');
+  table.append(tbody);
+
   var line = "";
   for (var iCoorLsa = 0; iCoorLsa < nlsrStatusCoordinateMessage.coor_lsa.length;
        ++iCoorLsa) {
     var nlsrStatusCoor = nlsrStatusCoordinateMessage.coor_lsa[iCoorLsa];
+    var origin_router = ProtobufTlv.toName(nlsrStatusCoor.lsa_info.origin_router.origin_router_name.component).toUri();;
+    var angle = nlsrStatusCoor.angle.value
+    var radius = nlsrStatusCoor.radius.value
 
-    line += "  info = LsaInfo (Origin Router: " + ProtobufTlv.toName(nlsrStatusCoor.lsa_info.origin_router.origin_router_name.component).toUri();
+    var row = $('<tr></tr>');
 
+    var col = $('<td></td>');
+    col.text(origin_router);
+    row.append(col);
+
+    col = $('<td></td>');
+    col.text("Angle: " + angle + ", Radius: " + radius);
+    row.append(col);
+
+    tbody.append(row);
+
+    // for debugging
+    line += "  info = LsaInfo (Origin Router: " + origin_router;
     line += ", Sequence Number: " + nlsrStatusCoor.lsa_info.sequence_number +
           ", Expiration Period: " + nlsrStatusCoor.lsa_info.expiration_period + ")" + "\n";
-
     line += "angle: " + nlsrStatusCoor.angle.value + "\n";
     line += "radius: " + nlsrStatusCoor.radius.value + "\n";
     line += "\n";
   }
+  // add table to the page
+  $('#coordinateTable').append(table);
   console.log(line);
 }
