@@ -19,8 +19,8 @@ function parseNameLsa(encodedMessage) {
   // Create the table headers
   var headers = ["Router", "Prefix"];
   for (var i in headers) {
-    var row = $('<td></td>').text(headers[i]);
-    theadRow.append(row);
+    var theadCol = $('<td></td>').text(headers[i]);
+    theadRow.append(theadCol);
   }
 
   // Create the body of the table
@@ -36,9 +36,9 @@ function parseNameLsa(encodedMessage) {
 
     // make a row for the origin router
     var row = $('<tr></tr>');
-    var tmp = $('<td rowspan="' + nlsrStatusName.name_prefix.length + '"></td>');;
-    tmp.text(originRouter);
-    row.append(tmp);
+    var col = $('<td rowspan="' + nlsrStatusName.name_prefix.length + '"></td>');;
+    col.text(originRouter);
+    row.append(col);
 
     line += "  info = LsaInfo (Origin Router: " + originRouter;
     line += ", Sequence Number: " + nlsrStatusName.lsa_info.sequence_number +
@@ -49,9 +49,9 @@ function parseNameLsa(encodedMessage) {
       var namePrefix = ProtobufTlv.toName(nlsrStatusName.name_prefix[inames].component).toUri();
 
       // Make a row and add name prefix to it
-      var tmp = $('<td></td>');
-      tmp.text(namePrefix);
-      row.append(tmp);
+      var col = $('<td></td>');
+      col.text(namePrefix);
+      row.append(col);
       tbody.append(row);
       row = $('<tr></tr>');
 
@@ -110,16 +110,16 @@ function parseAdjacentLsa(encodedMessage) {
 
     // Make a row for the origin router and add orign router to it.
     var row = $('<tr></tr>');
-    var tmp = $('<td rowspan="' + nlsrStatusAdj.adj.length + '"></td>');
-    tmp.text(originRouter);
-    row.append(tmp);
+    var col = $('<td rowspan="' + nlsrStatusAdj.adj.length + '"></td>');
+    col.text(originRouter);
+    row.append(col);
 
     for (var iAdj = 0; iAdj < nlsrStatusAdj.adj.length; ++iAdj) {
       var adjacent = ProtobufTlv.toName(nlsrStatusAdj.adj[iAdj].name.component).toUri();
       //var cost = nlsrStatusAdj.adj[iAdj].cost;
-      var tmp = $('<td></td>');
-      tmp.text(adjacent);
-      row.append(tmp);
+      var col = $('<td></td>');
+      col.text(adjacent);
+      row.append(col);
 
       // Append the data to the table and move to the next row
       tbody.append(row);
